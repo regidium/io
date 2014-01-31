@@ -1,0 +1,8 @@
+{
+    "env": "production",
+
+    "server": {
+        "port": 5000,
+        "url": "http://io.regidium.com"
+    }
+}
