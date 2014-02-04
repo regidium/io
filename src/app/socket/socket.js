@@ -4,8 +4,6 @@ var _ = require('underscore');
 // export function for listening to the socket
 self.init = function (io) {
     self.io = io;
-    /** Все online посетители */
-    self.visitors = {};
     /** Все online пользователи */
     self.users = {};
     /** Все online агенты */
@@ -15,38 +13,35 @@ self.init = function (io) {
 }
 
 self.run = function (socket) {
+    // Пользователь подключился
     socket.on('agent:connected', function(data) {
         /** @todo Передать агенту список ожидающих */
-        data.avatar = 'img/employee-photo-small.jpg';
         socket.agent = data;
+        socket.widget = data.agent.agent.widget.uid;
         self.agents[socket.agent.uid] = socket;
     });
 
-    socket.on('agent:registered', function(data) {
-        /** @todo реализовать */
-        socket.broadcast.emit('agent:registered', data);
+    // Пользователь подключился
+    socket.on('user:connected', function(data) {
+        if (!self.users[data.widget]) {
+            self.users[data.widget] = {};
+        }
+        socket.user = data.person;
+        socket.widget = data.widget;
+        // Добавляем пользователя в список пользователей онлайн
+        self.users[data.widget][data.person.uid] = data;
+        // Оповещаем агентов о подключении пользователя
+        socket.broadcast.emit('user:connected', data);
     });
 
-    socket.on('agent:edited', function(data) {
-        /** @todo реализовать */
-        socket.broadcast.emit('agent:edited', data);
-    });
-
-    socket.on('visitor:connected', function(data) {
-        /** @todo Оповестить всех агентов, о входе посетителя */
-        data.uid = socket.id;
-        data.model_type = 'visitor';
-        data.avatar = 'img/user-photo-default.jpg';
-        socket.visitor = data;
-        self.visitors[socket.id] = data;
-        socket.broadcast.emit('visitor:connected', data);
-        socket.emit('visitor:connected', data);
-    });
-
+    // Агент покинул чат
     socket.on('agent:chat:exited', function(data) {
         socket.leave(data.chat);
+        // Оповестить пользователя о выходе агента
+        socket.broadcast.to(data.chat).emit('agent:chat:exited', data);
     });
 
+    /** @todo REFACTORING!!! */
     socket.on('user:logined', function(data) {
         /** @todo Оповестить всех агентов, о входе пользователя */
         socket.user = data;
@@ -69,26 +64,60 @@ self.run = function (socket) {
         /** @todo реализовать */
     });
 
+    // Пользователь обновил страницу
+    socket.on('user:refreshed', function(data) {
+        console.log(data);
+        socket.broadcast.emit('user:refreshed', data);
+    });
+
+    // Пользователь создал чат
     socket.on('chat:created', function(data) {
-        self.chats[data.chat.uid] = data.chat;
+        if (!self.chats[data.widget]) {
+            self.chats[data.widget] = {}
+        }
+        // Добавляем чат в список чатов виджета
+        self.chats[data.widget][data.chat.uid] = data;
+        // Подключаем пользователя к своему чату
         socket.join(data.chat.uid);
+        // Оповещаем пользователей о создании чата
         socket.broadcast.emit('chat:created', data);
     });
 
+    // Пользователь открыл чат
     socket.on('chat:started', function(data) {
         /** @todo реализовать */
-        self.chats[data.chat.uid] = data.chat;
+        if (!self.chats[data.widget]) {
+            self.chats[data.widget] = {}
+        }
+        // Добавляем чат в список чатов виджета
+        self.chats[data.widget][data.chat.uid] = data;
+        // Подключаем пользователя к своему чату
         socket.join(data.chat.uid);
+        // Оповещаем агентов об открытии чата
         socket.broadcast.emit('chat:started', data);
     });
 
+    // Чат закрыт
+    /** @todo реализовать */
     socket.on('chat:ended', function(data) {
+        // Отключаем пользователя от чата
         socket.leave(data.chat.uid);
-        /** @todo реализовать */
+        if (self.chats[data.widget]) {
+            // Удаляем чат из списка чатов
+            delete self.chats[data.widget][data.chat];
+        }
+        // Оповещаем о закрытии чата
+        socket.broadcast.emit('chat:ended', data);
     });
 
+    // Чат уничтожен
     socket.on('chat:destroyed', function(data) {
-        delete self.chats[data.uid];
+        console.log(self.chats[data.widget]);
+        if (self.chats[data.widget]) {
+            // Удаляем чат из списка чатов
+            delete self.chats[data.widget][data.chat];
+        }
+        // Оповещаем об уничтожении чата
         socket.broadcast.emit('chat:destroyed', data);
     });
 
@@ -107,13 +136,20 @@ self.run = function (socket) {
     // ========================================= //
     // Выдаем список чатов
     socket.on('chats:online', function(data, cb) {
-        cb(self.chats);
-        //cb(self.io.sockets.manager.rooms)
+        if (self.chats[data]) {
+            cb(self.chats[data]);
+        } else {
+            cb([]);
+        }
     });
 
     // Выдаем список чатов
-    socket.on('visitors:online', function(data, cb) {
-        cb(self.visitors);
+    socket.on('users:online', function(data, cb) {
+        if (self.users[data]) {
+            cb(self.users[data]);
+        } else {
+            cb([]);
+        }
     });
 
     // Подключаем агента к чату
@@ -122,37 +158,32 @@ self.run = function (socket) {
         socket.broadcast.to(data.chat).emit('chat:agent:enter', data)
     });
 
-    // передать сообщение посетителя агенту
-    socket.on('chat:visitor:message:send', function (data) {
-        console.log(data.chat);
-        socket.broadcast.to(data.chat).emit('chat:visitor:message:send', data)
-    });
-
-    // передать сообщение пользователя агенту
+    // Пользователя написал сообщение
     socket.on('chat:user:message:send', function (data) {
+        // Оповещаем агента о сообщении пользователя
+        console.log('chat:user:message:send', data.chat);
         socket.broadcast.to(data.chat).emit('chat:user:message:send', data)
     });
 
-    // передать сообщение пользователя агенту
+    // Агент написал сообщение
     socket.on('chat:agent:message:send', function (data) {
+        // Оповещаем пользователя о сообщении агента
         socket.broadcast.to(data.chat).emit('chat:agent:message:send', data)
     });
 
+    /** @todo REFACTORING!!! */
     socket.on('disconnect', function () {
         if (socket.user) {
-            delete self.users[socket.user.uid];
-            var chats = Object.keys(self.io.sockets.manager.roomClients[socket.id]).map(function(room) { return room.replace('/', ''); });
+            delete self.users[socket.widget][socket.user.uid];
+            var chats = Object.keys(self.io.sockets.manager.roomClients[socket.user.uid]).map(function(room) { return room.replace('/', ''); });
+            socket.broadcast.emit('user:exited', {uid: socket.user.uid});
             _.each(chats, function(uid) {
                 socket.broadcast.emit('chat:destroyed', {uid: uid});
-                delete self.chats[uid];
+                delete self.chats[socket.widget][uid];
             });
-        } else if (socket.agent) {
-            delete self.agents[socket.agent.uid];
-        } else if (socket.visitor) {
-            delete self.visitors[socket.visitor.uid];
-            socket.broadcast.emit('visitor:exited', {uid: socket.visitor.uid});
-        } else {
-            return;
+        }
+        if (socket.agent) {
+            delete self.agents[socket.widget][socket.agent.agent.uid];
         }
     });
 };
