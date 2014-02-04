@@ -175,12 +175,12 @@ self.run = function (socket) {
     socket.on('disconnect', function () {
         if (socket.user) {
             delete self.users[socket.widget][socket.user.uid];
-            var chats = Object.keys(self.io.sockets.manager.roomClients[socket.user.uid]).map(function(room) { return room.replace('/', ''); });
+/*            var chats = Object.keys(self.io.sockets.manager.roomClients[socket.user.uid]).map(function(room) { return room.replace('/', ''); });
             socket.broadcast.emit('user:exited', {uid: socket.user.uid});
             _.each(chats, function(uid) {
                 socket.broadcast.emit('chat:destroyed', {uid: uid});
                 delete self.chats[socket.widget][uid];
-            });
+            });*/
         }
         if (socket.agent) {
             delete self.agents[socket.widget][socket.agent.agent.uid];
