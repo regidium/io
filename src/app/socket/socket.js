@@ -183,7 +183,9 @@ self.run = function (socket) {
             });*/
         }
         if (socket.agent) {
-            delete self.agents[socket.widget][socket.agent.agent.uid];
+            if (socket.widget && self.agents[socket.widget]) {
+                delete self.agents[socket.widget][socket.agent.agent.uid];
+            }
         }
     });
 };
