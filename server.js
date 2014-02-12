@@ -1,10 +1,11 @@
 var http = require('http');
 var config = require('./config/config/config.json');
 var express = require('express');
+var redis = require('redis');
 
 var app = express();
-
 var server = http.createServer(app);
+
 var io = require('socket.io').listen(server)
     .set('log level', 2)
     .set('close timeout', 35)
@@ -16,9 +17,6 @@ var io = require('socket.io').listen(server)
     ])
     .set('browser client minification', true)
     .set('browser client gzip', true);
-
-var socket = require('./src/app/socket/socket.js');
-socket.init(io);
 
 app.set(config.env);
 
@@ -32,12 +30,21 @@ app.configure('development', function() {
 
 app.configure('production', function() {});
 
+// Events
+var events = require('./src/framework/events/events');
+events.initialize();
+
+// Socket
+var sockets = require('./src/app/socket/sockets.js');
+sockets.initialize(io, events);
+
 // Routes
 app.get('*', function(req, res) {
     res.send('Socket.IO');
 });
 
-io.sockets.on('connection', socket.run);
+// Start Socket
+io.sockets.on('connection', sockets.connection);
 
 var response = require('http').ServerResponse.prototype;
 
