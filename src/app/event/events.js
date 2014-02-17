@@ -1,7 +1,6 @@
-var self = module.exports = {};
-
-self.initialize = function (events)
+var self = module.exports = function (events, io)
 {
-    require('./events/user.js');
-    require('./events/agent.js');
+    require('./events/user.js')(events, io);
+    require('./events/agent.js')(events, io);
+    require('./events/chat.js')(events, io);
 };

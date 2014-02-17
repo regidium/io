@@ -5,11 +5,14 @@ self.initialize = function (io, events) {
     self.io = io;
     // Redis
     self.events = events;
+
+    return self;
 }
 
 self.connection = function (socket) {
 
-    require('./sockets/user.js')(self.io, self.events);
-    require('./sockets/agent.js')(self.io, self.events);
+    require('./sockets/user.js')(self.io, socket, self.events);
+    require('./sockets/agent.js')(self.io, socket, self.events);
+    require('./sockets/chat.js')(self.io, socket, self.events);
 
 };

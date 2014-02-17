@@ -16,7 +16,6 @@ self.initialize = function ()
     self.sub.subscribe(config.redis.events_in);
     self.sub.on('message', function (chanell, event) {
         event = JSON.parse(event);
-        console.log('New event: chanell' + chanell + ' event: ' + event.key);
         self.handle_event(event.key, event.data);
     });
 
@@ -49,10 +48,10 @@ self.handle_event = function (key, data)
 
 /**
  * @param string key
- * @param Object value
+ * @param Object data
  */
-self.publish = function (key, value)
+self.publish = function (key, data)
 {
-    var event = JSON.stringify({ key: key, value: value});
+    var event = JSON.stringify({ key: key, data: data});
     self.pub.publish(config.redis.events_out, event);
 };

@@ -1,7 +1,12 @@
 var http = require('http');
 var config = require('./config/config/config.json');
 var express = require('express');
-var redis = require('redis');
+var RedisStore = require('socket.io/lib/stores/redis');
+var redis  = require('redis');
+
+var pub = redis.createClient();
+var sub = redis.createClient();
+var client = redis.createClient();
 
 var app = express();
 var server = http.createServer(app);
@@ -16,7 +21,14 @@ var io = require('socket.io').listen(server)
         'websocket', 'flashsocket', 'htmlfile', 'xhr-polling', 'jsonp-polling'
     ])
     .set('browser client minification', true)
-    .set('browser client gzip', true);
+    .set('browser client gzip', true)
+    .set('store', new RedisStore({
+        redis: redis,
+        redisPub: pub,
+        redisSub: sub,
+        redisClient: client
+    }))
+;
 
 app.set(config.env);
 
@@ -33,6 +45,7 @@ app.configure('production', function() {});
 // Events
 var events = require('./src/framework/events/events');
 events.initialize();
+require('./src/app/event/events')(events, io);
 
 // Socket
 var sockets = require('./src/app/socket/sockets.js');

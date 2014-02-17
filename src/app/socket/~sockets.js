@@ -25,24 +25,6 @@ self.run = function (socket) {
         self.agents[socket.agent.uid] = socket;
     });
 
-    // Пользователь подключился
-    socket.on('user:connected', function(data) {
-        self.store.hmset("users:" + data.person.uid, { uid: data.person.uid, text: 'User Connected' }, function(e, r) {
-            self.pub.publish("regidium_io_events", "users:" + data.person.uid)
-        });
-
-        if (!self.users[data.widget]) {
-            self.users[data.widget] = {};
-        };
-
-        socket.user = data.person;
-        socket.widget = data.widget;
-        // Добавляем пользователя в список пользователей онлайн
-        self.users[data.widget][data.person.uid] = data;
-        // Оповещаем агентов о подключении пользователя
-        socket.broadcast.emit('user:connected', data);
-    });
-
     sub.on('agent:connected', function(pattern, key){
         console.log('agent:connected');
     })
