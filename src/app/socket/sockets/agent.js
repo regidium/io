@@ -30,7 +30,7 @@ var self = module.exports = function (io, socket, events)
     socket.on('agent:disconnect', function(data) {
         console.log('Socket agent:disconnect');
         // Оповещаем event сервер
-        self.pub.publish('agent:disconnected', { person: data.person_uid, widget: data.widget_uid });
+        events.pub.publish('agent:disconnect', { person: data.person_uid, widget: data.widget_uid });
         // Отключаем агена от комнаты виджета
         socket.leave(data.widget_uid);
         // Оповещаем слушателей
