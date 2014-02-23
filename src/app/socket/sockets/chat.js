@@ -104,6 +104,24 @@ var self = module.exports = function (io, socket, events)
     });
 
     /**
+     * Запрашиваем список архивных чатов
+     * 
+     * @param Object data {
+     *   string widget_uid - UID виджета
+     * }
+     *
+     * @store SMEMBERS chats(Widget UID)
+     *
+     * @emit chat:online:list
+     */
+    socket.on('chat:archives', function (data) {
+        console.log('Subscribe: chat:archives');
+
+        // Оповещаем event сервер
+        events.publish('chat:archives', data);
+    });
+
+    /**
      * Пользователь отправил сообщение
      *
      * @param Object data {
