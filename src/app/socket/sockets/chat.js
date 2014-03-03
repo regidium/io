@@ -17,7 +17,7 @@ var self = module.exports = function (io, socket, events)
 
         // Добавляем переменную widget_uid к сокету
         socket.widget_uid = data.widget_uid;
-        // Подключаем сокету к комнате виджета
+        // Подключаем сокет к комнате виджета
         socket.join(data.widget_uid);
         // Оповещаем event сервер о необходимости создать пользователя и чат
         events.publish('chat:create', { widget_uid: data.widget_uid, user_data: data.user_data, socket_id: socket.id });
@@ -107,12 +107,11 @@ var self = module.exports = function (io, socket, events)
      * Запрашиваем список архивных чатов
      * 
      * @param Object data {
+     *   string chat_uid - UID чата
      *   string widget_uid - UID виджета
      * }
      *
-     * @store SMEMBERS chats(Widget UID)
-     *
-     * @emit chat:online:list
+     * @emit chat:archives
      */
     socket.on('chat:archives', function (data) {
         console.log('Subscribe: chat:archives');

@@ -68,5 +68,18 @@ var self = module.exports = function (events, io)
         io.sockets.in(data.widget_uid).emit('chat:agent:entered', data);
     });
 
+    /**
+     * Event сервер вернул список архивных чатов
+     * @param Object data = []
+     *
+     * @emit chat:archives:list
+     */
+    events.subscribe('chat:archives:list', function (data) {
+        console.log('Subscribe: chat:archives:list');
+
+        // Возвращаем слушателям список архивных чатов
+        io.sockets.in(data.widget_uid).emit('chat:archives:list', data);
+    });
+
     return self;
 };
