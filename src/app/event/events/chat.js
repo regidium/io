@@ -69,6 +69,32 @@ var self = module.exports = function (events, io)
     });
 
     /**
+     * Event сервер вернул список существующих чатов
+     * @param Object data = []
+     *
+     * @emit chat:existed:list
+     */
+    events.subscribe('chat:existed:list', function (data) {
+        console.log('Subscribe: chat:existed:list');
+
+        // Возвращаем слушателям список существующих чатов
+        io.sockets.in(data.widget_uid).emit('chat:existed:list', data);
+    });
+
+    /**
+     * Event сервер вернул список online чатов
+     * @param Object data = []
+     *
+     * @emit chat:online:list
+     */
+    events.subscribe('chat:online:list', function (data) {
+        console.log('Subscribe: chat:online:list');
+
+        // Возвращаем слушателям список online чатов
+        io.sockets.in(data.widget_uid).emit('chat:online:list', data);
+    });
+
+    /**
      * Event сервер вернул список архивных чатов
      * @param Object data = []
      *

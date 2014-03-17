@@ -77,7 +77,25 @@ var self = module.exports = function (io, socket, events)
     });
 
     /**
-     * Запрашиваем список чатов онлайн
+     * Запрашиваем список существующих чатов
+     * 
+     * @param Object data {
+     *   string widget_uid - UID виджета
+     * }
+     *
+     * @store SMEMBERS chats(Widget UID)
+     *
+     * @emit chat:existed:list
+     */
+    socket.on('chat:existed', function (data) {
+        console.log('Subscribe: chat:existed');
+
+        // Запрашивам список существующих чатов в event сервере
+        events.publish('chat:existed', { widget_uid: socket.widget_uid });
+    });
+
+    /**
+     * Запрашиваем список online чатов
      * 
      * @param Object data {
      *   string widget_uid - UID виджета
@@ -90,17 +108,8 @@ var self = module.exports = function (io, socket, events)
     socket.on('chat:online', function (data) {
         console.log('Subscribe: chat:online');
 
-        // Получем список чатов из Redis
-        events.store.hvals('chats:' + data.widget_uid, function(err, obj) {
-            var chats = {};
-            _.each(obj, function(e) {
-                var o = JSON.parse(e);
-                chats[o.chat.uid] = JSON.parse(e);
-            })
-
-            // Передаем слушателям список чатов
-            io.sockets.in(data.widget_uid).emit('chat:online:list', chats);
-        });
+        // Запрашивам список online чатов в event сервере
+        events.publish('chat:online', { widget_uid: socket.widget_uid });
     });
 
     /**
