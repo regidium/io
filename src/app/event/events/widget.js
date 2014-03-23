@@ -15,7 +15,11 @@ var self = module.exports = function (events, io)
         console.log('Subscribe: widget:info:sended');
 
         // Оповещаем слушателей о создании чата
-        io.sockets.in(data.widget_uid).sockets[data.socket_id].emit('widget:info:sended', data);
+        if (io.sockets.in(data.widget_uid).sockets[data.socket_id]) {
+            io.sockets.in(data.widget_uid).sockets[data.socket_id].emit('widget:info:sended', data);
+        } else {
+            console.log('Сокет ', data.socket_id, ' не создан')
+        }
     });
 
     return self;
