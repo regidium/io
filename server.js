@@ -29,6 +29,7 @@ var io = require('socket.io').listen(server)
         redisClient: client
     }))
 ;
+io.set( 'origins', '*' );
 
 app.set(config.env);
 
