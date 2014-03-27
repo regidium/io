@@ -12,6 +12,7 @@ var app = express();
 var server = http.createServer(app);
 
 var io = require('socket.io').listen(server)
+    .set('origins', '*:*')
     .set('log level', 2)
     .set('close timeout', 35)
     .set('max reconnection attempts', 100)
@@ -50,6 +51,7 @@ app.set(config.env);
 
 app.configure(function() {
     app.set('port', config.server.port);
+    app.use(enableCORS);
 });
 
 app.configure('development', function() {
