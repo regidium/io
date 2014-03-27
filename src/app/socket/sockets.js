@@ -2,7 +2,6 @@ var self = module.exports = {};
 
 self.initialize = function (io, events) {
     // SocketIO
-    io.set('origins', '*:*');
     self.io = io;
     // Redis
     self.events = events;
