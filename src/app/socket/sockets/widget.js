@@ -3,7 +3,7 @@ var _ = require('underscore');
 var self = module.exports = function (io, socket, events)
 {
     /**
-     * Запрашиваем инфьрмацию о виджете
+     * Запрашиваем информацию о виджете
      * 
      * @param Object data {
      *   string widget_uid - UID виджета

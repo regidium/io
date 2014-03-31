@@ -11,7 +11,6 @@ self.initialize = function (io, events) {
 
 self.connection = function (socket) {
 
-    require('./sockets/user.js')(self.io, socket, self.events);
     require('./sockets/agent.js')(self.io, socket, self.events);
     require('./sockets/chat.js')(self.io, socket, self.events);
     require('./sockets/widget.js')(self.io, socket, self.events);

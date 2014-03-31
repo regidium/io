@@ -6,7 +6,7 @@ var self = module.exports = function (io, socket, events)
      * Чат создается
      * 
      * @param Object data {
-     *   Object use_data   - информация о пользователе
+     *   Object chat       - данные чата
      *   string widget_uid - UID виджета
      * }
      *
@@ -20,15 +20,14 @@ var self = module.exports = function (io, socket, events)
         // Подключаем сокет к комнате виджета
         socket.join(data.widget_uid);
         // Оповещаем event сервер о необходимости создать пользователя и чат
-        events.publish('chat:create', { widget_uid: data.widget_uid, user_data: data.user_data, socket_id: socket.id });
+        events.publish('chat:create', { widget_uid: data.widget_uid, chat: data.chat, socket_id: socket.id });
     });
 
     /**
      * Чат подключается
      *
      * @param Object data {
-     *   Object person     - информация о пользователе
-     *   Object chat       - информация о чате
+     *   Object chat       - данные чата
      *   string widget_uid - UID виджета
      * }
      *
@@ -44,7 +43,7 @@ var self = module.exports = function (io, socket, events)
         // Подключаем чат к комнате виджета
         socket.join(data.widget_uid);
         // Оповещаем event сервер о подключении чата
-        events.publish('chat:connect', { chat: data.chat, person: data.person, widget_uid: data.widget_uid });
+        events.publish('chat:connect', { chat: data.chat, widget_uid: data.widget_uid });
     });
 
     /**
@@ -62,7 +61,7 @@ var self = module.exports = function (io, socket, events)
     });
 
     /**
-     * Сокет отключается
+     * Сокет отключился
      *
      * @publish chat:disconnect
      */
@@ -83,9 +82,7 @@ var self = module.exports = function (io, socket, events)
      *   string widget_uid - UID виджета
      * }
      *
-     * @store SMEMBERS chats(Widget UID)
-     *
-     * @emit chat:existed:list
+     * @publish chat:existed
      */
     socket.on('chat:existed', function (data) {
         console.log('Subscribe: chat:existed');
@@ -101,9 +98,7 @@ var self = module.exports = function (io, socket, events)
      *   string widget_uid - UID виджета
      * }
      *
-     * @store SMEMBERS chats(Widget UID)
-     *
-     * @emit chat:online:list
+     * @publish chat:online
      */
     socket.on('chat:online', function (data) {
         console.log('Subscribe: chat:online');
@@ -120,7 +115,7 @@ var self = module.exports = function (io, socket, events)
      *   string widget_uid - UID виджета
      * }
      *
-     * @emit chat:archives
+     * @publish chat:archives
      */
     socket.on('chat:archives', function (data) {
         console.log('Subscribe: chat:archives');
@@ -133,10 +128,14 @@ var self = module.exports = function (io, socket, events)
      * Пользователь отправил сообщение
      *
      * @param Object data {
-     *   Object person     - данные пользователя
+     *   Object message    - данные сообщения
      *   string chat_uid   - UID чата
      *   string widget_uid - UID виджета
      * }
+     *
+     * @publish chat:message:send:user
+     *
+     * @emit chat:message:send:user
      */
     socket.on('chat:message:send:user', function(data) {
         console.log('Socket chat:message:send:user');
@@ -151,10 +150,14 @@ var self = module.exports = function (io, socket, events)
      * Агент отправил сообщение
      *
      * @param Object data {
-     *   Object person     - данные агента
+     *   Object message    - данные сообщения
      *   string chat_uid   - UID чата
      *   string widget_uid - UID виджета
      * }
+     *
+     * @publish chat:message:send:user
+     *
+     * @emit chat:message:send:user
      */
     socket.on('chat:message:send:agent', function(data) {
         console.log('Socket chat:message:send:agent');
@@ -170,7 +173,7 @@ var self = module.exports = function (io, socket, events)
      * Агент подключися к чату
      *
      * @param Object data {
-     *   Object person     - данные агента
+     *   Object agent      - данные агента
      *   string chat_uid   - UID чата
      *   string widget_uid - UID виджета
      * }
@@ -189,16 +192,52 @@ var self = module.exports = function (io, socket, events)
     });
 
     /**
+     * @todo Реализовать
      * Агент отключился от чата
      *
      * @param Object data {
-     *   Object  person - персона агента,
-     *   string chat   - UID чата
+     *   Object agent      - данные агента,
+     *   string chat       - UID чата
      *   string widget_uid - UID виджета
      * }
      */
     socket.on('chat:leave:agent', function(data) {
         console.log('Socket chat:leave:agent');
+    });
+
+    /**
+     * Пользователь ввел авторизационные данные
+     *
+     * @param Object data {
+     *   Object chat       - данные чата
+     *   string widget_uid - UID виджета
+     * }
+     *
+     * @publish chat:user:auth
+     */
+    socket.on('chat:user:auth', function(data) {
+        console.log('Socket chat:user:auth');
+
+        // Оповещаем event сервер
+        events.publish('chat:user:auth', { chat: data.chat, widget_uid: data.widget_uid, socket_id: socket.id });
+    });
+
+    /**
+     * @TODO дореализовать
+     * Изменена страница чата
+     *
+     * @param Object data {
+     *   string chat_uid   - UID чата
+     *   string widget_uid - UID виджета
+     * }
+     */
+    socket.on('chat:page:change', function(data) {
+        console.log('Socket chat:page:change');
+
+        // Оповещаем event сервер
+        events.publish('chat:page:changed', { chat_uid: data.chat_uid, widget_uid: data.widget_uid });
+        // Оповещаем агентов
+        socket.broadcast.to(data.widget_uid).emit('chat:destroy', data);
     });
 
     return self;
