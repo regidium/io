@@ -21,7 +21,6 @@ var self = module.exports = function (events, io)
     /**
      * Event сервер сообщил о подключении чата
      * @param Object data = {
-     *       Object person     - данные пользователя
      *       Object chat       - данные чата
      *       string widget_uid - UID виджета
      *   }
@@ -105,6 +104,24 @@ var self = module.exports = function (events, io)
 
         // Возвращаем слушателям список архивных чатов
         io.sockets.in(data.widget_uid).emit('chat:archives:list', data);
+    });
+
+    /**
+     * Event сервер сообщил о изменении пользовательских данных
+     * @param Object data = {
+     *       string user       - данные пользователя
+     *       string chat_uid   - UID чата
+     *       string widget_uid - UID виджета
+     *       string socket_id  - ID сокета
+     *   }
+     *
+     * @emit user:auth:entered
+     */
+    events.subscribe('chat:user:authed', function (data) {
+        console.log('chat:user:authed');
+
+        // Оповещаем слушателей о создании чата
+        io.sockets.in(data.widget_uid).sockets[data.socket_id].emit('chat:user:authed', data);
     });
 
     return self;

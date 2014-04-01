@@ -50,7 +50,7 @@ var self = module.exports = function (io, socket, events)
      * Чат подключился
      *
      * @param Object data {
-     *   string chat_uid - UID чата
+     *   string chat - данные чата
      * }
      */
     socket.on('chat:connected', function(data) {
@@ -219,7 +219,7 @@ var self = module.exports = function (io, socket, events)
         console.log('Socket chat:user:auth');
 
         // Оповещаем event сервер
-        events.publish('chat:user:auth', { chat: data.chat, widget_uid: data.widget_uid, socket_id: socket.id });
+        events.publish('chat:user:auth', { user: data.user, chat_uid: data.chat_uid, widget_uid: data.widget_uid, socket_id: socket.id });
     });
 
     /**
