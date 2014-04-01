@@ -1,6 +1,24 @@
 var self = module.exports = function (io, socket, events)
 {
     /**
+     * Получение списка агентов
+     * 
+     * @param Object data {
+     *   string widget_uid - UID виджета
+     * }
+     *
+     * @publish agent:existed
+     *
+     * @emit agent:existed
+     */
+    socket.on('agent:existed', function(data) {
+        console.log('Socket agent:existed');
+
+        // Оповещаем event сервер
+        events.publish('agent:existed', { widget_uid: data.widget_uid });
+    });
+
+    /**
      * Агент подключился
      * 
      * @param Object data {
@@ -40,11 +58,49 @@ var self = module.exports = function (io, socket, events)
         console.log('Socket agent:disconnect');
 
         // Оповещаем event сервер
-        events.publish('agent:disconnect', { agent: data.agent_uid, widget: data.widget_uid });
+        events.publish('agent:disconnect', { agent_uid: data.agent_uid, widget_uid: data.widget_uid });
         // Отключаем агена от комнаты виджета
         socket.leave(data.widget_uid);
         // Оповещаем слушателей
         socket.broadcast.to(data.widget_uid).emit('agent:disconnected', data);
+    });
+
+    /**
+     * Сохранение агента
+     * 
+     * @param Object data {
+     *   Object agent      - данные агента
+     *   string widget_uid - UID виджета
+     * }
+     *
+     * @publish agent:save
+     *
+     * @emit agent:save
+     */
+    socket.on('agent:save', function(data) {
+        console.log('Socket agent:save');
+
+        // Оповещаем event сервер
+        events.publish('agent:save', { agent: data.agent, widget_uid: data.widget_uid });
+    });
+
+    /**
+     * Удаление агента
+     * 
+     * @param Object data {
+     *   Object agent_uid  - UID агента
+     *   string widget_uid - UID виджета
+     * }
+     *
+     * @publish agent:remove
+     *
+     * @emit agent:remove
+     */
+    socket.on('agent:remove', function(data) {
+        console.log('Socket agent:remove');
+
+        // Оповещаем event сервер
+        events.publish('agent:remove', { agent_uid: data.agent_uid, widget_uid: data.widget_uid });
     });
 
     return self;
