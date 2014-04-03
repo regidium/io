@@ -82,7 +82,9 @@ var self = module.exports = function (events, io)
 
     /**
      * Event сервер вернул список online чатов
-     * @param Object data = []
+     * @param Object data = [
+     *            array chats
+     *        ]
      *
      * @emit chat:online:list
      */
@@ -118,10 +120,28 @@ var self = module.exports = function (events, io)
      * @emit user:auth:entered
      */
     events.subscribe('chat:user:authed', function (data) {
-        console.log('chat:user:authed');
+        console.log('Subscribe: chat:user:authed');
 
         // Оповещаем слушателей о создании чата
-        io.sockets.in(data.widget_uid).sockets[data.socket_id].emit('chat:user:authed', data);
+        io.sockets.in(data.widget_uid).emit('chat:user:authed', data);
+    });
+
+    /**
+     * Event сервер сообщил о записи сообщения пользователя
+     * @param Object data = {
+     *       string user       - данные пользователя
+     *       string chat_uid   - UID чата
+     *       string widget_uid - UID виджета
+     *       string socket_id  - ID сокета
+     *   }
+     *
+     * @emit user:auth:entered
+     */
+    events.subscribe('chat:message:sended:user', function (data) {
+        console.log('Subscribe: chat:message:sended:user');
+
+        // Оповещаем слушателей о создании чата
+        io.sockets.in(data.widget_uid).emit('chat:message:sended:user', data);
     });
 
     return self;

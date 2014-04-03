@@ -12,7 +12,6 @@ var app = express();
 var server = http.createServer(app);
 
 var io = require('socket.io').listen(server)
-    .set('origins', '*:*')
     .set('log level', 2)
     .set('close timeout', 35)
     .set('max reconnection attempts', 100)
@@ -31,28 +30,10 @@ var io = require('socket.io').listen(server)
     }))
 ;
 
-// Enables CORS
-var enableCORS = function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', 'http://widget.regidium.com');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Headers', 'Origin Content-Type, Content-Range, Content-Disposition, Content-Description, Authorization, X-Requested-With, *');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-    res.header('Allow', 'GET,PUT,POST,DELETE,OPTIONS');
-
-    // intercept OPTIONS method
-    if ('OPTIONS' == req.method) {
-        res.send(200);
-    } else {
-        next();
-    };
-};
-
-
 app.set(config.env);
 
 app.configure(function() {
     app.set('port', config.server.port);
-    app.use(enableCORS);
 });
 
 app.configure('development', function() {
@@ -71,6 +52,21 @@ var sockets = require('./src/app/socket/sockets.js');
 sockets.initialize(io, events);
 
 // Routes
+
+/**
+ * On all requests add headers
+ */
+app.all('*', function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+
+    if ('OPTIONS' == req.method) {
+        res.send(200);
+    } else {
+        next();
+    }
+});
+
 app.get('*', function(req, res) {
     res.send('Socket.IO');
 });

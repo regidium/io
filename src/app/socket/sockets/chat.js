@@ -70,6 +70,8 @@ var self = module.exports = function (io, socket, events)
 
         // Если отключается пользователь
         if (socket.chat_uid) {
+            // Оповещаем агентов
+            socket.broadcast.to(socket.widget_uid).emit('chat:disconnect', { chat_uid: socket.chat_uid, widget_uid: socket.widget_uid });
             // Оповещаем event сервер об отключении чата
             events.publish('chat:disconnect', { chat_uid: socket.chat_uid, widget_uid: socket.widget_uid });
         }
