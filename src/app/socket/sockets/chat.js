@@ -43,7 +43,7 @@ var self = module.exports = function (io, socket, events)
         // Подключаем чат к комнате виджета
         socket.join(data.widget_uid);
         // Оповещаем event сервер о подключении чата
-        events.publish('chat:connect', { chat: data.chat, widget_uid: data.widget_uid });
+        events.publish('chat:connect', { chat: data.chat, widget_uid: data.widget_uid, socket_id: socket.id });
     });
 
     /**
@@ -90,7 +90,7 @@ var self = module.exports = function (io, socket, events)
         console.log('Subscribe: chat:existed');
 
         // Запрашивам список существующих чатов в event сервере
-        events.publish('chat:existed', { widget_uid: socket.widget_uid });
+        events.publish('chat:existed', { widget_uid: data.widget_uid });
     });
 
     /**
