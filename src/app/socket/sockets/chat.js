@@ -106,7 +106,7 @@ var self = module.exports = function (io, socket, events)
         console.log('Subscribe: chat:online');
 
         // Запрашивам список online чатов в event сервере
-        events.publish('chat:online', { widget_uid: socket.widget_uid });
+        events.publish('chat:online', { widget_uid: data.widget_uid });
     });
 
     /**
