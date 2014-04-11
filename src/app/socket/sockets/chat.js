@@ -131,7 +131,7 @@ var self = module.exports = function (io, socket, events)
      *
      * @param Object data {
      *   Object message    - данные сообщения
-     *   string chat_uid   - UID чата
+     *   Object chat       - данные чата
      *   string widget_uid - UID виджета
      * }
      *
@@ -157,9 +157,9 @@ var self = module.exports = function (io, socket, events)
      *   string widget_uid - UID виджета
      * }
      *
-     * @publish chat:message:send:user
+     * @publish chat:message:send:agent
      *
-     * @emit chat:message:send:user
+     * @emit chat:message:send:agent
      */
     socket.on('chat:message:send:agent', function(data) {
         console.log('Socket chat:message:send:agent');
