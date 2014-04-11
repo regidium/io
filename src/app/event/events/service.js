@@ -9,17 +9,17 @@ var self = module.exports = function (events, io)
         console.log('Subscribe: service:online:users');
         var clients = io.sockets.clients();
 
-        var socket_ids = [];
+        var chats_uids = [];
         // Перебираем всех сокеты
         clients.forEach(function(client) {
-            // Отбираем пользователей
+            // Отбираем только пользователей
             if (!client.agent) {
-                // Заполняем массив ID сокетов
-                socket_ids.push(client.id)
+                // Заполняем массив UID актинвных чатов
+                chats_uids.push(client.chat_uid)
             }
         });
 
-        events.publish('service:online:users:list', { socket_ids: socket_ids } )
+        events.publish('service:online:users:list', { chats_uids: chats_uids } )
     });
 
     /**
