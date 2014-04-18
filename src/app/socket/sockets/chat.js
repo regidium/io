@@ -81,6 +81,7 @@ var self = module.exports = function (io, socket, events)
      * Запрашиваем список существующих чатов
      * 
      * @param Object data {
+     *   string agent_uid  - UID агента
      *   string widget_uid - UID виджета
      * }
      *
@@ -90,7 +91,7 @@ var self = module.exports = function (io, socket, events)
         console.log('Subscribe: chat:existed');
 
         // Запрашивам список существующих чатов в event сервере
-        events.publish('chat:existed', { widget_uid: data.widget_uid });
+        events.publish('chat:existed', { widget_uid: data.widget_uid, agent_uid: data.agent_uid });
     });
 
     /**
