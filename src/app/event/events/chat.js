@@ -129,19 +129,51 @@ var self = module.exports = function (events, io)
     /**
      * Event сервер сообщил о записи сообщения пользователя
      * @param Object data = {
-     *       string user       - данные пользователя
+     *       Object message    - данные сообщения
      *       string chat_uid   - UID чата
      *       string widget_uid - UID виджета
-     *       string socket_id  - ID сокета
      *   }
      *
-     * @emit user:auth:entered
+     * @emit chat:message:sended:user
      */
     events.subscribe('chat:message:sended:user', function (data) {
         console.log('Subscribe: chat:message:sended:user');
 
         // Оповещаем слушателей о создании чата
         io.sockets.in(data.widget_uid).emit('chat:message:sended:user', data);
+    });
+
+    /**
+     * Event сервер сообщил о записи сообщения агента
+     * @param Object data = {
+     *       Object message    - данные сообщения
+     *       string chat_uid   - UID чата
+     *       string widget_uid - UID виджета
+     *   }
+     *
+     * @emit chat:message:sended:agent
+     */
+    events.subscribe('chat:message:sended:agent', function (data) {
+        console.log('Subscribe: chat:message:sended:agent');
+
+        // Оповещаем слушателей о создании чата
+        io.sockets.in(data.widget_uid).emit('chat:message:sended:agent', data);
+    });
+
+    /**
+     * Event сервер вернул список непрочитанных сообщений
+     * @param Object data = {
+     *       Object new_messages - список непрочитанных сообщений
+     *       string widget_uid   - UID виджета
+     *   }
+     *
+     * @emit chat:message:new:list
+     */
+    events.subscribe('chat:message:new:list', function (data) {
+        console.log('Subscribe: chat:message:new:list');
+
+        // Оповещаем слушателей
+        io.sockets.in(data.widget_uid).emit('chat:message:new:list', data);
     });
 
     return self;

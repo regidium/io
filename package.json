@@ -1,4 +1,4 @@
-{
+ {
     "name": "regidium-io",
     "version": "0.0.1",
     "description": "IO Regidium",
@@ -38,7 +38,8 @@
         "start": "node server.js"
     },
     "dependencies": {
-        "express": "3.x",
+        "express": "4.x",
+        "morgan": "1.x",
         "underscore": "1.5.x",
         "socket.io": "0.9.x",
         "redis": "0.10.x",

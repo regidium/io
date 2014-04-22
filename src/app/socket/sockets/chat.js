@@ -243,5 +243,71 @@ var self = module.exports = function (io, socket, events)
         socket.broadcast.to(data.widget_uid).emit('chat:destroy', data);
     });
 
+    /**
+     * Пользователе прочел сообщение агента
+     *
+     * @param Object data {
+     *   string message_uid - UID сообщения
+     *   string chat_uid    - UID чата
+     *   string widget_uid  - UID виджета
+     * }
+     * 
+     * @publish chat:message:readed
+     *
+     * @emit chat:message:readed:user
+     */
+    socket.on('chat:message:read:user', function(data) {
+        console.log('Socket chat:message:read:user');
+
+        if (data && data.event_send) {
+            // Оповещаем event сервер
+            events.publish('chat:message:readed', data);
+        }
+        // Оповещаем агентов
+        socket.broadcast.to(data.widget_uid).emit('chat:message:readed:user', data);
+    });
+
+    /**
+     * Агент прочел сообщение пользователя
+     *
+     * @param Object data {
+     *   string message_uid - UID сообщения
+     *   string chat_uid    - UID чата
+     *   string widget_uid  - UID виджета
+     * }
+     * 
+     * @publish chat:message:readed
+     *
+     * @emit chat:message:readed:agent
+     */
+    socket.on('chat:message:read:agent', function(data) {
+        console.log('Socket chat:message:read:agent');
+
+        if (data && data.event_send) {
+            // Оповещаем event сервер
+            events.publish('chat:message:readed', data);
+        }
+        // Оповещаем агентов
+        socket.broadcast.to(data.widget_uid).emit('chat:message:readed:agent', data);
+    });
+
+    /**
+     * Запрос списока непрочитанных сообщений
+     *
+     * @param Object data {
+     *   string message_uid - UID сообщения
+     *   string chat_uid    - UID чата
+     *   string widget_uid  - UID виджета
+     * }
+     * 
+     * @publish chat:message:new
+     */
+    socket.on('chat:message:new:get', function(data) {
+        console.log('Socket chat:message:new:get');
+
+        // Запрашиваем event сервер
+        events.publish('chat:message:new:get', data);
+    });
+
     return self;
 };

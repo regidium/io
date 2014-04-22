@@ -1,14 +1,15 @@
-var http = require('http');
-var config = require('./config/config/config.json');
-var express = require('express');
+var http       = require('http');
+var config     = require('./config/config/config.json');
+var express    = require('express');
+var morgan     = require('morgan');
 var RedisStore = require('socket.io/lib/stores/redis');
-var redis  = require('redis');
+var redis      = require('redis');
 
-var pub = redis.createClient();
-var sub = redis.createClient();
+var pub    = redis.createClient();
+var sub    = redis.createClient();
 var client = redis.createClient();
 
-var app = express();
+var app    = express();
 var server = http.createServer(app);
 
 var io = require('socket.io').listen(server)
@@ -30,17 +31,24 @@ var io = require('socket.io').listen(server)
     }))
 ;
 
+var env = config.env || 'development';
 app.set(config.env);
 
-app.configure(function() {
-    app.set('port', config.server.port);
+app.set('port', config.server.port);
+
+app.use(function(err, req, res, next) {
+    if (!err) {
+        return next();
+    }
+
+    res.json({error: err});
 });
 
-app.configure('development', function() {
-    app.use(express.logger('dev'));
-});
+if ('development' == env) {
+    app.use(morgan('dev'));
+}
 
-app.configure('production', function() {});
+if ('production' == env) {}
 
 // Events
 var events = require('./src/framework/events/events');
