@@ -22,5 +22,57 @@ var self = module.exports = function (io, socket, events)
         events.publish('widget:info:get', { widget_uid: data.widget_uid, socket_id: socket.id });
     });
 
+    /**
+     * Сохраняем настройки стиля виджета
+     * 
+     * @param Object data {
+     *   Object settings   - данные настроек
+     *   string widget_uid - UID виджета
+     * }
+     *
+     * @publish widget:setting:style:edit
+     */
+    socket.on('widget:setting:style:edit', function(data) {
+        console.log('Socket widget:setting:style:edit');
+
+        // Оповещаем event сервер
+        events.publish('widget:setting:style:edit', data);
+    });
+
+    /**
+     * Сохраняем триггер виджета
+     * 
+     * @param Object data {
+     *   Object trigger     - данные триггера
+     *   string trigger_uid - UID триггера
+     *   string widget_uid  - UID виджета
+     * }
+     *
+     * @publish widget:setting:triggers:edit
+     */
+    socket.on('widget:setting:triggers:edit', function(data) {
+        console.log('Socket widget:setting:triggers:edit');
+
+        // Оповещаем event сервер
+        events.publish('widget:setting:triggers:edit', data);
+    });
+
+    /**
+     * Удаляем триггер виджета
+     * 
+     * @param Object data {
+     *   string trigger_uid - UID триггера
+     *   string widget_uid  - UID виджета
+     * }
+     *
+     * @publish widget:setting:triggers:remove
+     */
+    socket.on('widget:setting:triggers:remove', function(data) {
+        console.log('Socket widget:setting:triggers:remove');
+
+        // Оповещаем event сервер
+        events.publish('widget:setting:triggers:remove', data);
+    });
+
     return self;
 };
