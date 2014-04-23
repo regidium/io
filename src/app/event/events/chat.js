@@ -68,6 +68,23 @@ var self = module.exports = function (events, io)
     });
 
     /**
+     * Event сервер сообщил об отключении агента от чата
+     * @param Object data = {
+     *       Object agent      - данные агента
+     *       string chat_uid   - UID чата
+     *       string widget_uid - UID виджета
+     *   }
+     *
+     * @emit chat:agent:leaved
+     */
+    events.subscribe('chat:agent:leaved', function (data) {
+        console.log('Subscribe: chat:agent:leaved');
+
+        // Оповещаем слушателей об отключнии агента от чата
+        io.sockets.in(data.widget_uid).emit('chat:agent:leaved', data);
+    });
+
+    /**
      * Event сервер вернул список существующих чатов
      * @param Object data = []
      *

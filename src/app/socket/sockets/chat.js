@@ -195,17 +195,25 @@ var self = module.exports = function (io, socket, events)
     });
 
     /**
-     * @todo Реализовать
      * Агент отключился от чата
      *
      * @param Object data {
-     *   Object agent      - данные агента,
-     *   string chat       - UID чата
+     *   Object agent      - данные агента
+     *   string chat_uid   - UID чата
      *   string widget_uid - UID виджета
      * }
+     *
+     * @publish chat:agent:leave
+     *
+     * @emit chat:agent:leave
      */
-    socket.on('chat:leave:agent', function(data) {
-        console.log('Socket chat:leave:agent');
+    socket.on('chat:agent:leave', function(data) {
+        console.log('Socket chat:agent:leave');
+
+        // Оповещаем event сервер
+        events.publish('chat:agent:leave', data);
+        // Оповещаем слушателей
+        socket.broadcast.to(data.widget_uid).emit('chat:agent:leave', data);
     });
 
     /**
