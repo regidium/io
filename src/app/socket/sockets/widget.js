@@ -44,7 +44,6 @@ var self = module.exports = function (io, socket, events)
      * 
      * @param Object data {
      *   Object trigger     - данные триггера
-     *   string trigger_uid - UID триггера
      *   string widget_uid  - UID виджета
      * }
      *
