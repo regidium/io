@@ -13,6 +13,7 @@ var app    = express();
 var server = http.createServer(app);
 
 var io = require('socket.io').listen(server)
+    .set('flash policy port', config.server.port)
     .set('log level', 2)
     .set('close timeout', 35)
     .set('max reconnection attempts', 100)
