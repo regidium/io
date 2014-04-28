@@ -177,21 +177,5 @@ var self = module.exports = function (events, io)
         io.sockets.in(data.widget_uid).emit('chat:message:sended:agent', data);
     });
 
-    /**
-     * Event сервер вернул список непрочитанных сообщений
-     * @param Object data = {
-     *       Object new_messages - список непрочитанных сообщений
-     *       string widget_uid   - UID виджета
-     *   }
-     *
-     * @emit chat:message:new:list
-     */
-    events.subscribe('chat:message:new:list', function (data) {
-        console.log('Subscribe: chat:message:new:list');
-
-        // Оповещаем слушателей
-        io.sockets.in(data.widget_uid).emit('chat:message:new:list', data);
-    });
-
     return self;
 };

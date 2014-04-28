@@ -234,21 +234,25 @@ var self = module.exports = function (io, socket, events)
     });
 
     /**
-     * @TODO дореализовать
      * Изменена страница чата
      *
      * @param Object data {
+     *   string new_uid   - UID чата
      *   string chat_uid   - UID чата
      *   string widget_uid - UID виджета
      * }
+     *
+     * @publish chat:url:change
+     *
+     * @emit chat:url:change
      */
-    socket.on('chat:page:change', function(data) {
-        console.log('Socket chat:page:change');
+    socket.on('chat:url:change', function(data) {
+        console.log('Socket chat:url:change');
 
         // Оповещаем event сервер
-        events.publish('chat:page:changed', { chat_uid: data.chat_uid, widget_uid: data.widget_uid });
+        events.publish('chat:url:change', data);
         // Оповещаем агентов
-        socket.broadcast.to(data.widget_uid).emit('chat:destroy', data);
+        socket.broadcast.to(data.widget_uid).emit('chat:url:change', data);
     });
 
     /**
@@ -297,24 +301,6 @@ var self = module.exports = function (io, socket, events)
         }
         // Оповещаем агентов
         socket.broadcast.to(data.widget_uid).emit('chat:message:readed:agent', data);
-    });
-
-    /**
-     * Запрос списока непрочитанных сообщений
-     *
-     * @param Object data {
-     *   string message_uid - UID сообщения
-     *   string chat_uid    - UID чата
-     *   string widget_uid  - UID виджета
-     * }
-     * 
-     * @publish chat:message:new
-     */
-    socket.on('chat:message:new:get', function(data) {
-        console.log('Socket chat:message:new:get');
-
-        // Запрашиваем event сервер
-        events.publish('chat:message:new:get', data);
     });
 
     return self;

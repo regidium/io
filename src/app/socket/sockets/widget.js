@@ -73,5 +73,71 @@ var self = module.exports = function (io, socket, events)
         events.publish('widget:setting:triggers:remove', data);
     });
 
+    /**
+     * Запрос списока непрочитанных сообщений
+     *
+     * @param Object data {
+     *   string widget_uid  - UID виджета
+     * }
+     * 
+     * @publish widget:message:new:get
+     */
+    socket.on('widget:message:new:get', function(data) {
+        console.log('Socket widget:message:new:get');
+
+        // Запрашиваем event сервер
+        events.publish('widget:message:new:get', data);
+    });
+
+    /**
+     * Запрос списока непрочитанных сообщений
+     *
+     * @param Object data {
+     *   string widget_uid  - UID виджета
+     * }
+     * 
+     * @publish widget:message:new:get
+     */
+    socket.on('widget:message:new:get', function(data) {
+        console.log('Socket widget:message:new:get');
+
+        // Запрашиваем event сервер
+        events.publish('widget:message:new:get', data);
+    });
+
+    /**
+     * Оплата услуг виджета
+     *
+     * @param Object data {
+     *   Object pay        - метод оплаты
+     *   string widget_uid - UID виджета
+     * }
+     * 
+     * @publish widget:payment:made
+     */
+    socket.on('widget:payment:made', function(data) {
+        console.log('Socket widget:payment:made');
+
+        // Запрашиваем event сервер
+        events.publish('widget:payment:made', data);
+    });
+
+    /**
+     * Смена тарифного плана
+     *
+     * @param Object data {
+     *   int    plan       - тарифный план
+     *   string widget_uid - UID виджета
+     * }
+     * 
+     * @publish widget:plan:change
+     */
+    socket.on('widget:plan:change', function(data) {
+        console.log('Socket widget:plan:change');
+
+        // Запрашиваем event сервер
+        events.publish('widget:plan:change', data);
+    });
+
     return self;
 };

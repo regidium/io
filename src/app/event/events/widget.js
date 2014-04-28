@@ -70,5 +70,52 @@ var self = module.exports = function (events, io)
         io.sockets.in(data.widget_uid).emit('widget:setting:triggers:removed', data);
     });
 
+    /**
+     * Event сервер вернул список непрочитанных сообщений
+     * @param Object data = {
+     *       Object new_messages - список непрочитанных сообщений
+     *       string widget_uid   - UID виджета
+     *   }
+     *
+     * @emit widget:message:new:list
+     */
+    events.subscribe('widget:message:new:list', function (data) {
+        console.log('Subscribe: widget:message:new:list');
+
+        // Оповещаем слушателей
+        io.sockets.in(data.widget_uid).emit('widget:message:new:list', data);
+    });
+
+    /**
+     * Event сервер вернул событие оплату виджета
+     * @param Object data = {
+     *       Object payment    - данные оплаты
+     *       string widget_uid - UID виджета
+     *   }
+     *
+     * @emit widget:payment:madet
+     */
+    events.subscribe('widget:payment:madet', function (data) {
+        console.log('Subscribe: widget:payment:madet');
+
+        // Оповещаем слушателей
+        io.sockets.in(data.widget_uid).emit('widget:payment:madet', data);
+    });
+
+    /**
+     * Event сервер вернул событие смены тарифного плана виджета
+     * @param Object data = {
+     *       string widget_uid - UID виджета
+     *   }
+     *
+     * @emit widget:plan:changed
+     */
+    events.subscribe('widget:plan:changed', function (data) {
+        console.log('Subscribe: widget:plan:changed');
+
+        // Оповещаем слушателей
+        io.sockets.in(data.widget_uid).emit('widget:plan:changed', data);
+    });
+
     return self;
 };
