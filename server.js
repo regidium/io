@@ -15,14 +15,16 @@ var server = http.createServer(app);
 var io = require('socket.io').listen(server)
     /*.set('flash policy port', config.server.port)*/
     .set('log level', 2)
+    //.set('match origin protocol', true)
     .set('close timeout', 35)
     .set('max reconnection attempts', 100)
     .set('heartbeat timeout', 60)
     .set('heartbeat interval', 25)
     .set('transports', [
-        'websocket', 'flashsocket', 'htmlfile', 'xhr-polling', 'jsonp-polling'
+        'websocket', 'xhr-polling', 'flashsocket', 'htmlfile', 'jsonp-polling'
     ])
-    .set('browser client minification', true)
+    .set('origins', '*regidium.loc*:*' )
+    .set('browser client minification', false)
     .set('browser client gzip', true)
     .set('store', new RedisStore({
         redis: redis,
