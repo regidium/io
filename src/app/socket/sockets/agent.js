@@ -33,14 +33,22 @@ var self = module.exports = function (io, socket, events)
     socket.on('agent:connect', function(data) {
         console.log('Socket agent:connect');
 
-        socket.agent = data.agent;
-        socket.widget_uid = data.widget_uid;
-        // Подключаем пользователя к комнате виджета
-        socket.join(data.widget_uid);
+        // Удаляем таймер отключения
+        if (io.timers['agent_' + data.agent.uid]) {
+            // ===== Агент вернулся
+            clearTimeout(io.timers['agent_' + data.agent.uid]);
+        } else {
+            // ===== Агент зашел
+            // @depricated
+            socket.agent = data.agent;
+            socket.agent_uid = data.agent.uid;
+            socket.widget_uid = data.widget_uid;
+            // Подключаем пользователя к комнате виджета
+            socket.join(data.widget_uid);
 
-        // Оповещаем event сервер
-        // @todo
-        //events.publish('agent:connect', { agent: data.agent, widget_uid: data.widget_uid });
+            // Оповещаем event сервер
+            events.publish('agent:connect', { agent: data.agent, widget_uid: data.widget_uid });
+        }
     });
 
     /**

@@ -1,5 +1,3 @@
-var _ = require('underscore');
-
 var self = module.exports = function (io, socket, events)
 {
     /**
@@ -36,14 +34,22 @@ var self = module.exports = function (io, socket, events)
     socket.on('chat:connect', function(data) {
         console.log('Socket chat:connect');
 
-        // Добавляем переменную widget_uid к сокету
-        socket.widget_uid = data.widget_uid;
-        // Добавляем переменную chat_uid к сокету
-        socket.chat_uid = data.chat.uid;
-        // Подключаем чат к комнате виджета
-        socket.join(data.widget_uid);
-        // Оповещаем event сервер о подключении чата
-        events.publish('chat:connect', { chat: data.chat, widget_uid: data.widget_uid, socket_id: socket.id });
+        // Удаляем таймер отключения
+        if (io.timers['chat_' + data.chat.uid]) {
+            // ===== Пользователь вернулся
+            clearTimeout(io.timers['chat_' + data.chat.uid]);
+            socket.broadcast.to(data.widget_uid).emit('chat:url:change', { chat_uid: data.chat.uid, new_url: data.current_url });
+        } else {
+            // ===== Пользователь зашел
+            // Добавляем переменную widget_uid к сокету
+            socket.widget_uid = data.widget_uid;
+            // Добавляем переменную chat_uid к сокету
+            socket.chat_uid = data.chat.uid;
+            // Подключаем чат к комнате виджета
+            socket.join(data.widget_uid);
+            // Оповещаем event сервер о подключении чата
+            events.publish('chat:connect', { chat: data.chat, widget_uid: data.widget_uid, socket_id: socket.id });
+        }
     });
 
     /**
@@ -58,23 +64,6 @@ var self = module.exports = function (io, socket, events)
 
         // Добавляем переменную chat_uid к сокету
         socket.chat_uid = data.chat_uid;
-    });
-
-    /**
-     * Сокет отключился
-     *
-     * @publish chat:disconnect
-     */
-    socket.on('disconnect', function () {
-        console.log('Socket disconnect');
-
-        // Если отключается пользователь
-        if (socket.chat_uid) {
-            // Оповещаем агентов
-            socket.broadcast.to(socket.widget_uid).emit('chat:disconnect', { chat_uid: socket.chat_uid, widget_uid: socket.widget_uid });
-            // Оповещаем event сервер об отключении чата
-            events.publish('chat:disconnect', { chat_uid: socket.chat_uid, widget_uid: socket.widget_uid });
-        }
     });
 
     /**

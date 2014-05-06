@@ -1,5 +1,3 @@
-var _ = require('underscore');
-
 var self = module.exports = function (io, socket, events)
 {
     /**
