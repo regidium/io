@@ -156,8 +156,9 @@ var self = module.exports = function (events, io)
     events.subscribe('chat:message:sended:user', function (data) {
         console.log('Subscribe: chat:message:sended:user');
 
-        // Оповещаем слушателей о создании чата
+        // Оповещаем новом сообщении
         io.sockets.in(data.widget_uid).emit('chat:message:sended:user', data);
+        io.sockets.in(data.widget_uid).emit('chat:message:add:new', data);
     });
 
     /**

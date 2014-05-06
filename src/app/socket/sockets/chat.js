@@ -277,6 +277,7 @@ var self = module.exports = function (io, socket, events)
         }
         // Оповещаем агентов
         socket.broadcast.to(data.widget_uid).emit('chat:message:readed:user', data);
+        socket.broadcast.to(data.widget_uid).emit('chat:message:remove:new', data);
     });
 
     /**
