@@ -35,6 +35,22 @@ var self = module.exports = function (events, io)
     });
 
     /**
+     * Event сервер сообщил о закрытии чата
+     * @param Object data = {
+     *       string chat_uid   - UID чата
+     *       string widget_uid - UID виджета
+     *   }
+     *
+     * @emit chat:closed
+     */
+    events.subscribe('chat:closed', function (data) {
+        console.log('Subscribe: chat:closed');
+
+        // Оповещаем слушателей о закрытии чата
+        io.sockets.in(data.widget_uid).emit('chat:closed', data);
+    });
+
+    /**
      * Event сервер сообщил об отключении чата
      * @param Object data = {
      *       string chat_uid   - UID чата
@@ -101,12 +117,13 @@ var self = module.exports = function (events, io)
      * Event сервер вернул список online чатов
      * @param Object data = [
      *            array chats
+     *            string widget_uid
      *        ]
      *
      * @emit chat:online:list
      */
     events.subscribe('chat:online:list', function (data) {
-        console.log('Subscribe: chat:online:list');
+        console.log('Subscribe: chat:online:list', data);
 
         // Возвращаем слушателям список online чатов
         io.sockets.in(data.widget_uid).emit('chat:online:list', data);

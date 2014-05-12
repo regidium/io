@@ -7,7 +7,7 @@ var self = module.exports = function (io, socket, events)
      * @publish agent:disconnect
      */
     socket.on('disconnect', function () {
-        console.log('Socket disconnect');
+        console.log('Socket disconnect', socket.chat_uid);
 
         // Если отключается пользователь
         if (socket.chat_uid) {
@@ -27,8 +27,16 @@ var self = module.exports = function (io, socket, events)
                 events.publish('agent:disconnect', { agent_uid: socket.agent_uid, widget_uid: socket.widget_uid });
                 // Удаляем таймер
                 delete io.timers['chat_' + socket.chat_uid];
-            }, 60000);
+            }, 6000);
         }
+    });
+
+    socket.on('reconnecting', function () {
+        console.log('Socket reconnecting');
+    });
+
+    socket.on('reconnect', function () {
+        console.log('Socket reconnect');
     });
 
     return self;

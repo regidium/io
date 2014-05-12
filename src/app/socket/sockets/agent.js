@@ -37,10 +37,11 @@ var self = module.exports = function (io, socket, events)
         if (io.timers['agent_' + data.agent.uid]) {
             // ===== Агент вернулся
             clearTimeout(io.timers['agent_' + data.agent.uid]);
+
+            // Подключаем сокет к комнате виджета
+            socket.join(data.widget_uid);
         } else {
             // ===== Агент зашел
-            // @depricated
-            socket.agent = data.agent;
             socket.agent_uid = data.agent.uid;
             socket.widget_uid = data.widget_uid;
             // Подключаем пользователя к комнате виджета

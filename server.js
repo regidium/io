@@ -13,9 +13,6 @@ var app    = express();
 var server = http.createServer(app);
 
 var io = require('socket.io').listen(server)
-    /*.set('flash policy port', config.server.port)*/
-    .set('log level', 2)
-    //.set('match origin protocol', true)
     .set('close timeout', 35)
     .set('max reconnection attempts', 100)
     .set('heartbeat timeout', 60)
@@ -23,7 +20,7 @@ var io = require('socket.io').listen(server)
     .set('transports', [
         'websocket', 'xhr-polling', 'flashsocket', 'htmlfile', 'jsonp-polling'
     ])
-    .set('origins', '*regidium.loc*:*' )
+    //.set('origins', '*regidium.com*:*' )
     .set('browser client minification', false)
     .set('browser client gzip', true)
     .set('store', new RedisStore({
@@ -49,9 +46,12 @@ app.use(function(err, req, res, next) {
 
 if ('development' == env) {
     app.use(morgan('dev'));
+    io.set('log level', 3);
 }
 
-if ('production' == env) {}
+if ('production' == env) {
+    io.set('log level', 0);
+}
 
 // Events
 var events = require('./src/framework/events/events');

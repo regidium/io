@@ -38,7 +38,9 @@ var self = module.exports = function (io, socket, events)
         if (io.timers['chat_' + data.chat.uid]) {
             // ===== Пользователь вернулся
             clearTimeout(io.timers['chat_' + data.chat.uid]);
-            socket.broadcast.to(data.widget_uid).emit('chat:url:change', { chat_uid: data.chat.uid, new_url: data.current_url });
+
+            // Подключаем сокет к комнате виджета
+            socket.join(data.widget_uid);
         } else {
             // ===== Пользователь зашел
             // Добавляем переменную widget_uid к сокету
@@ -64,6 +66,26 @@ var self = module.exports = function (io, socket, events)
 
         // Добавляем переменную chat_uid к сокету
         socket.chat_uid = data.chat_uid;
+    });
+
+    /**
+     * Чат закрыт
+     *
+     * @param Object data {
+     *   string chat_uid  - UID чата
+     *   string widget_uid - UID виджета
+     * }
+     *
+     * @publish chat:close
+     */
+    socket.on('chat:close', function(data) {
+        console.log('Socket chat:close');
+
+        // Оповещаем агентов
+        socket.broadcast.to(data.widget_uid).emit('chat:closed', data);
+
+        // Оповещаем event сервер
+        events.publish('chat:close', data);
     });
 
     /**
@@ -266,7 +288,6 @@ var self = module.exports = function (io, socket, events)
         }
         // Оповещаем агентов
         socket.broadcast.to(data.widget_uid).emit('chat:message:readed:user', data);
-        socket.broadcast.to(data.widget_uid).emit('chat:message:remove:new', data);
     });
 
     /**
@@ -289,8 +310,11 @@ var self = module.exports = function (io, socket, events)
             // Оповещаем event сервер
             events.publish('chat:message:readed', data);
         }
-        // Оповещаем агентов
+        // Оповещаем о прочтении сообщения
         socket.broadcast.to(data.widget_uid).emit('chat:message:readed:agent', data);
+
+        //socket.broadcast.to(data.widget_uid).emit('chat:message:remove:new', data);
+        io.sockets.in(data.widget_uid).emit('chat:message:remove:new', data);
     });
 
     return self;
