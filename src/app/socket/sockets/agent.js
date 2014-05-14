@@ -23,6 +23,7 @@ var self = module.exports = function (io, socket, events)
      * 
      * @param Object data {
      *   Object agent      - данные агент,
+     *   Object session    - данные сессии,
      *   string widget_uid - UID виджета
      * }
      *
@@ -48,7 +49,7 @@ var self = module.exports = function (io, socket, events)
             socket.join(data.widget_uid);
 
             // Оповещаем event сервер
-            events.publish('agent:connect', { agent: data.agent, widget_uid: data.widget_uid });
+            events.publish('agent:connect', { agent: data.agent, session: data.session, widget_uid: data.widget_uid });
         }
     });
 
