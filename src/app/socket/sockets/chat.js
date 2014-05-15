@@ -82,7 +82,7 @@ var self = module.exports = function (io, socket, events)
         console.log('Socket chat:close');
 
         // Оповещаем агентов
-        socket.broadcast.to(data.widget_uid).emit('chat:closed', data);
+        //socket.broadcast.to(data.widget_uid).emit('chat:closed', data);
 
         // Оповещаем event сервер
         events.publish('chat:close', data);

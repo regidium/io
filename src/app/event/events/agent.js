@@ -3,7 +3,7 @@ var self = module.exports = function (events, io)
     /**
      * Event сервер вернул список агентов
      * @param Object data = {
-     *       array agents     - массив агентов
+     *       array agents      - массив агентов
      *       string widget_uid - UID виджета
      *   }
      *
@@ -51,7 +51,7 @@ var self = module.exports = function (events, io)
     /**
      * Event сервер сообщил о входе агента
      * @param Object data = {
-     *       Object person     - данные агента
+     *       Object agent      - данные агента
      *       string widget_uid - UID виджета
      *   }
      *
@@ -67,7 +67,7 @@ var self = module.exports = function (events, io)
     /**
      * Event сервер сообщил о выходе агента
      * @param Object data = {
-     *       string person_uid - UID агента
+     *       string agent_uid  - UID агента
      *       string widget_uid - UID виджета
      *   }
      *

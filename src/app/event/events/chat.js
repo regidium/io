@@ -123,7 +123,7 @@ var self = module.exports = function (events, io)
      * @emit chat:online:list
      */
     events.subscribe('chat:online:list', function (data) {
-        console.log('Subscribe: chat:online:list', data);
+        console.log('Subscribe: chat:online:list');
 
         // Возвращаем слушателям список online чатов
         io.sockets.in(data.widget_uid).emit('chat:online:list', data);

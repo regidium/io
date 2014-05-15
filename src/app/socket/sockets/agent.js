@@ -34,6 +34,8 @@ var self = module.exports = function (io, socket, events)
     socket.on('agent:connect', function(data) {
         console.log('Socket agent:connect');
 
+        socket.agent_uid = data.agent.uid;
+
         // Удаляем таймер отключения
         if (io.timers['agent_' + data.agent.uid]) {
             // ===== Агент вернулся
