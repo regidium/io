@@ -35,47 +35,25 @@ var self = module.exports = function (io, socket, events)
         console.log('Socket agent:connect');
 
         socket.agent_uid = data.agent.uid;
+        socket.widget_uid = data.widget_uid;
 
         // Удаляем таймер отключения
         if (io.timers['agent_' + data.agent.uid]) {
             // ===== Агент вернулся
+
             clearTimeout(io.timers['agent_' + data.agent.uid]);
 
             // Подключаем сокет к комнате виджета
             socket.join(data.widget_uid);
         } else {
             // ===== Агент зашел
-            socket.agent_uid = data.agent.uid;
-            socket.widget_uid = data.widget_uid;
+
             // Подключаем пользователя к комнате виджета
             socket.join(data.widget_uid);
 
             // Оповещаем event сервер
             events.publish('agent:connect', { agent: data.agent, session: data.session, widget_uid: data.widget_uid });
         }
-    });
-
-    /**
-     * Агент отключился
-     * 
-     * @param Object data {
-     *   Object agent_uid  - UID агента
-     *   string widget_uid - UID виджета
-     * }
-     *
-     * @publish agent:disconnect
-     *
-     * @emit agent:disconnected
-     */
-    socket.on('agent:disconnect', function(data) {
-        console.log('Socket agent:disconnect');
-
-        // Оповещаем event сервер
-        events.publish('agent:disconnect', { agent_uid: data.agent_uid, widget_uid: data.widget_uid });
-        // Отключаем агена от комнаты виджета
-        socket.leave(data.widget_uid);
-        // Оповещаем слушателей
-        socket.broadcast.to(data.widget_uid).emit('agent:disconnected', data);
     });
 
     /**
@@ -114,6 +92,23 @@ var self = module.exports = function (io, socket, events)
 
         // Оповещаем event сервер
         events.publish('agent:remove', { agent_uid: data.agent_uid, widget_uid: data.widget_uid });
+    });
+
+    /**
+     * Агент написал предложение
+     *
+     * @param Object data {
+     *   Object issue  - предложение
+     *   string agent_uid - UID агента
+     * }
+     *
+     * @publish agent:issue:send
+     */
+    socket.on('agent:issue:send', function(data) {
+        console.log('Socket agent:issue:send');
+
+        // Оповещаем event сервер
+        events.publish('agent:issue:send', data);
     });
 
     return self;
