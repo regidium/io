@@ -87,19 +87,19 @@ var self = module.exports = function (events, io)
     });
 
     /**
-     * Event сервер вернул событие оплату виджета
+     * Event сервер вернул транзакцию на оплату виджета
      * @param Object data = {
      *       Object payment    - данные оплаты
      *       string widget_uid - UID виджета
      *   }
      *
-     * @emit widget:payment:madet
+     * @emit widget:payment:transaction
      */
-    events.subscribe('widget:payment:madet', function (data) {
-        console.log('Subscribe: widget:payment:madet');
+    events.subscribe('widget:payment:transaction', function (data) {
+        console.log('Subscribe: widget:payment:transaction');
 
         // Оповещаем слушателей
-        io.sockets.in(data.widget_uid).emit('widget:payment:madet', data);
+        io.sockets.in(data.widget_uid).emit('widget:payment:transaction', data);
     });
 
     /**
