@@ -248,7 +248,7 @@ var self = module.exports = function (io, socket, events)
      * Изменена страница чата
      *
      * @param Object data {
-     *   string new_uid   - UID чата
+     *   string new_url    - URL сайта
      *   string chat_uid   - UID чата
      *   string widget_uid - UID виджета
      * }
@@ -264,6 +264,26 @@ var self = module.exports = function (io, socket, events)
         events.publish('chat:url:change', data);
         // Оповещаем агентов
         socket.broadcast.to(data.widget_uid).emit('chat:url:change', data);
+    });
+
+    /**
+     * Изменен referrer сайта
+     *
+     * @param Object data {
+     *   string referrer   - Referrer сайта
+     *   string chat_uid   - UID чата
+     *   string widget_uid - UID виджета
+     * }
+     *
+     * @publish chat:referrer:change
+     *
+     * @emit chat:referrer:change
+     */
+    socket.on('chat:referrer:change', function(data) {
+        console.log('Socket chat:referrer:change');
+
+        // Оповещаем event сервер
+        events.publish('chat:referrer:change', data);
     });
 
     /**

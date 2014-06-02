@@ -195,5 +195,23 @@ var self = module.exports = function (events, io)
         io.sockets.in(data.widget_uid).emit('chat:message:sended:agent', data);
     });
 
+    /**
+     * Referrer сайта изменен
+     * @param Object data = {
+     *       string referrer   - Referrer сайта
+     *       string keywords   - Ключевые слова
+     *       string chat_uid   - UID чата
+     *       string widget_uid - UID виджета
+     *   }
+     *
+     * @emit chat:referrer:changed
+     */
+    events.subscribe('chat:referrer:changed', function (data) {
+        console.log('Subscribe: chat:referrer:changed');
+
+        // Оповещаем слушателей
+        io.sockets.in(data.widget_uid).emit('chat:referrer:changed', data);
+    });
+
     return self;
 };
