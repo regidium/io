@@ -90,6 +90,7 @@ var self = module.exports = function (events, io)
      * Event сервер вернул транзакцию на оплату виджета
      * @param Object data = {
      *       Object payment    - данные оплаты
+     *       string agent_uid  - UID агента
      *       string widget_uid - UID виджета
      *   }
      *

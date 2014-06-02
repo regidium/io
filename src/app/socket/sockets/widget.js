@@ -108,6 +108,7 @@ var self = module.exports = function (io, socket, events)
      *
      * @param Object data {
      *   Object pay        - метод оплаты
+     *   string agent_uid  - UID агента
      *   string widget_uid - UID виджета
      * }
      * 
