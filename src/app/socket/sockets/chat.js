@@ -182,6 +182,23 @@ var self = module.exports = function (io, socket, events)
         socket.broadcast.to(data.widget_uid).emit('chat:message:send:agent', data);
     });
 
+    /**
+     * Робот отправил сообщение
+     *
+     * @param Object data {
+     *   Object message    - данные сообщения
+     *   Object chat_uid   - UID чата
+     *   string widget_uid - UID виджета
+     * }
+     *
+     * @publish chat:message:send:robot
+     */
+    socket.on('chat:message:send:robot', function(data) {
+        console.log('Socket chat:message:send:robot');
+
+        // Оповещаем event сервер
+        events.publish('chat:message:send:robot', data);
+    });
 
     /**
      * Агент подключися к чату

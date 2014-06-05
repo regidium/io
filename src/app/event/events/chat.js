@@ -15,7 +15,10 @@ var self = module.exports = function (events, io)
         console.log('Subscribe: chat:created');
 
         // Оповещаем слушателей о создании чата
-        io.sockets.in(data.widget_uid).sockets[data.socket_id].emit('chat:created', data);
+        //io.sockets.in(data.widget_uid).sockets[data.socket_id].emit('chat:created', data);
+
+        // Оповещаем слушателей о создании чата
+        io.sockets.in(data.widget_uid).emit('chat:created', data);
     });
 
     /**
@@ -191,8 +194,25 @@ var self = module.exports = function (events, io)
     events.subscribe('chat:message:sended:agent', function (data) {
         console.log('Subscribe: chat:message:sended:agent');
 
-        // Оповещаем слушателей о создании чата
+        // Оповещаем слушателей
         io.sockets.in(data.widget_uid).emit('chat:message:sended:agent', data);
+    });
+
+    /**
+     * Event сервер сообщил о записи сообщения робота
+     * @param Object data = {
+     *       Object message    - данные сообщения
+     *       string chat_uid   - UID чата
+     *       string widget_uid - UID виджета
+     *   }
+     *
+     * @emit chat:message:sended:robot
+     */
+    events.subscribe('chat:message:sended:robot', function (data) {
+        console.log('Subscribe: chat:message:sended:robot');
+
+        // Оповещаем слушателей
+        io.sockets.in(data.widget_uid).emit('chat:message:sended:robot', data);
     });
 
     /**
@@ -211,6 +231,22 @@ var self = module.exports = function (events, io)
 
         // Оповещаем слушателей
         io.sockets.in(data.widget_uid).emit('chat:referrer:changed', data);
+    });
+
+    /**
+     * Изменился статус чата
+     * @param Object data = {
+     *       string chat       - данные чата
+     *       string widget_uid - UID виджета
+     *   }
+     *
+     * @emit chat:status:changed
+     */
+    events.subscribe('chat:status:changed', function (data) {
+        console.log('Subscribe: chat:status:changed');
+
+        // Оповещаем слушателей
+        io.sockets.in(data.widget_uid).emit('chat:status:changed', data);
     });
 
     return self;
