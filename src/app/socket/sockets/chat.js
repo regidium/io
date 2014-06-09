@@ -34,6 +34,11 @@ var self = module.exports = function (io, socket, events)
     socket.on('chat:connect', function(data) {
         console.log('Socket chat:connect');
 
+        // Добавляем переменную widget_uid к сокету
+        socket.widget_uid = data.widget_uid;
+        // Добавляем переменную chat_uid к сокету
+        socket.chat_uid = data.chat.uid;
+
         // Удаляем таймер отключения
         if (io.timers['chat_' + data.chat.uid]) {
             // ===== Пользователь вернулся
@@ -45,10 +50,7 @@ var self = module.exports = function (io, socket, events)
             delete io.timers['chat_' + data.chat.uid];
         } else {
             // ===== Пользователь зашел
-            // Добавляем переменную widget_uid к сокету
-            socket.widget_uid = data.widget_uid;
-            // Добавляем переменную chat_uid к сокету
-            socket.chat_uid = data.chat.uid;
+
             // Подключаем чат к комнате виджета
             socket.join(data.widget_uid);
             // Оповещаем event сервер о подключении чата

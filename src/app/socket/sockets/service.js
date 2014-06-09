@@ -8,6 +8,7 @@ var self = module.exports = function (io, socket, events)
      */
     socket.on('disconnect', function () {
         console.log('Socket disconnect', socket.chat_uid, socket.agent_uid);
+
         // Если отключается пользователь
         if (socket.chat_uid) {
             io.timers['chat_'+socket.chat_uid] = setTimeout(function() {
