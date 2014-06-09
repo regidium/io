@@ -41,6 +41,8 @@ var self = module.exports = function (io, socket, events)
 
             // Подключаем сокет к комнате виджета
             socket.join(data.widget_uid);
+
+            delete io.timers['chat_' + data.chat.uid];
         } else {
             // ===== Пользователь зашел
             // Добавляем переменную widget_uid к сокету

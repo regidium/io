@@ -27,7 +27,7 @@ var self = module.exports = function (io, socket, events)
                 // Оповещаем event сервер об отключении агента
                 events.publish('agent:disconnect', { agent_uid: socket.agent_uid, widget_uid: socket.widget_uid });
                 // Удаляем таймер
-                delete io.timers['chat_' + socket.chat_uid];
+                delete io.timers['chat_' + socket.agent_uid];
             }, 6000);
         }
     });

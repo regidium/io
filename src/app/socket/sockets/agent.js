@@ -8,14 +8,41 @@ var self = module.exports = function (io, socket, events)
      * }
      *
      * @publish agent:existed
-     *
-     * @emit agent:existed
      */
     socket.on('agent:existed', function(data) {
         console.log('Socket agent:existed');
 
         // Оповещаем event сервер
         events.publish('agent:existed', { widget_uid: data.widget_uid });
+    });
+
+    /**
+     * Получение списка онлайн агентов
+     *
+     * @param Object data {
+     *   string widget_uid - UID виджета
+     * }
+     *
+     * @emit agent:online:list
+     */
+    socket.on('agent:online', function(data) {
+        console.log('Socket agent:online');
+
+        var clients = io.sockets.clients();
+
+        var agents_uids = [];
+        // Перебираем все сокеты
+        clients.forEach(function(client) {
+            // Отбираем только агентов
+            if (client.agent_uid && client.widget_uid && client.widget_uid == data.widget_uid) {
+                // Заполняем массив UID актинвных агентов
+                agents_uids.push(client.agent_uid)
+            }
+        });
+
+        if (io.sockets.in(data.widget_uid).sockets[socket.id]) {
+            io.sockets.in(data.widget_uid).sockets[socket.id].emit('agent:online:list', {agents_uids: agents_uids});
+        }
     });
 
     /**
@@ -28,8 +55,6 @@ var self = module.exports = function (io, socket, events)
      * }
      *
      * @publish agent:connect
-     *
-     * @emit agent:disconnected
      */
     socket.on('agent:connect', function(data) {
         console.log('Socket agent:connect');
@@ -43,17 +68,16 @@ var self = module.exports = function (io, socket, events)
 
             clearTimeout(io.timers['agent_' + data.agent.uid]);
 
-            // Подключаем сокет к комнате виджета
-            socket.join(data.widget_uid);
+            delete io.timers['agent_' + data.agent.uid];
         } else {
             // ===== Агент зашел
-
-            // Подключаем пользователя к комнате виджета
-            socket.join(data.widget_uid);
 
             // Оповещаем event сервер
             events.publish('agent:connect', { agent: data.agent, session: data.session, widget_uid: data.widget_uid });
         }
+
+        // Подключаем сокет к комнате виджета
+        socket.join(data.widget_uid);
     });
 
     /**

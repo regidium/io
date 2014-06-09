@@ -7,13 +7,14 @@ var self = module.exports = function (events, io)
      */
     events.subscribe('service:online:users', function (data) {
         console.log('Subscribe: service:online:users');
+
         var clients = io.sockets.clients();
 
         var chats_uids = [];
         // Перебираем всех сокеты
         clients.forEach(function(client) {
             // Отбираем только пользователей
-            if (!client.agent) {
+            if (client.chat_uid) {
                 // Заполняем массив UID актинвных чатов
                 chats_uids.push(client.chat_uid)
             }
