@@ -17,7 +17,7 @@ var self = module.exports = function (io, socket, events)
                 events.publish('chat:disconnect', { chat_uid: socket.chat_uid, widget_uid: socket.widget_uid });
                 // Удаляем таймер
                 delete io.timers['chat_' + socket.chat_uid];
-            }, 3000);
+            }, 6000);
         } else if (socket.agent_uid) {
             io.timers['agent_'+socket.agent_uid] = setTimeout(function() {
                 // Оповещаем пользователей
