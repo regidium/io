@@ -4,6 +4,7 @@ var self = module.exports = function (io, socket, events)
      * Запрашиваем информацию о виджете
      * 
      * @param Object data {
+     *   int    to         - кто запрашивает
      *   string widget_uid - UID виджета
      * }
      *
@@ -14,10 +15,14 @@ var self = module.exports = function (io, socket, events)
 
         // Добавляем переменную widget_uid к сокету
         socket.widget_uid = data.widget_uid;
-        // Подключаем сокет к комнате виджета
-        socket.join(data.widget_uid);
+
+        if (!data.to) {
+            data.to = 1;
+        }
+
+        data.socket_id = socket.id;
         // Оповещаем event сервер о необходимости создать пользователя и чат
-        events.publish('widget:info:get', { widget_uid: data.widget_uid, socket_id: socket.id });
+        events.publish('widget:info:get', data);
     });
 
     /**
