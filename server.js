@@ -44,10 +44,11 @@ app.use(function(err, req, res, next) {
     res.json({error: err});
 });
 
-if ('development' == env) {
-    app.use(morgan('dev'));
-    io.set('log level', 3);
-}
+//if ('development' == env) {
+//    app.use(morgan('dev'));
+//    io.set('log level', 3);
+//}
+io.set('log level', 0);
 
 if ('production' == env) {
     io.set('log level', 0);

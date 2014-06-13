@@ -102,7 +102,7 @@ var self = module.exports = function (io, socket, events)
      * @publish chat:existed
      */
     socket.on('chat:existed', function (data) {
-        console.log('Subscribe: chat:existed');
+        console.log('Socket: chat:existed');
 
         // Запрашивам список существующих чатов в event сервере
         events.publish('chat:existed', { widget_uid: data.widget_uid, agent_uid: data.agent_uid });
@@ -118,7 +118,7 @@ var self = module.exports = function (io, socket, events)
      * @publish chat:online
      */
     socket.on('chat:online', function (data) {
-        console.log('Subscribe: chat:online');
+        console.log('Socket: chat:online');
 
         // Запрашивам список online чатов в event сервере
         events.publish('chat:online', { widget_uid: data.widget_uid });
@@ -135,7 +135,7 @@ var self = module.exports = function (io, socket, events)
      * @publish chat:archives
      */
     socket.on('chat:archives', function (data) {
-        console.log('Subscribe: chat:archives');
+        console.log('Socket: chat:archives');
 
         // Оповещаем event сервер
         events.publish('chat:archives', data);

@@ -249,5 +249,18 @@ var self = module.exports = function (events, io)
         io.sockets.in(data.widget_uid).emit('chat:status:changed', data);
     });
 
+    /**
+     * Ошибка получения чата
+     * @param Object data
+     *
+     * @emit chat:status:changed
+     */
+    events.subscribe('chat:error:sended', function (data) {
+        console.log('Subscribe: chat:error:sended');
+
+        // Оповещаем слушателей
+        io.sockets.in(data.widget_uid).emit('chat:error:sended', data);
+    });
+
     return self;
 };

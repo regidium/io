@@ -7,7 +7,7 @@ var self = module.exports = function (io, socket, events)
      * @publish agent:disconnect
      */
     socket.on('disconnect', function () {
-        console.log('Socket disconnect', socket.chat_uid, socket.agent_uid);
+        console.log('Socket disconnect');
 
         // Если отключается пользователь
         if (socket.chat_uid) {
